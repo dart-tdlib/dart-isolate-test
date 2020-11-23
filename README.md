@@ -1,6 +1,6 @@
 # hello_world
 
-A new Flutter project.
+This is a project for testing isolates which will eventually used in [dart-ffi-tdlib](https://github.com/pqhaz/dart-ffi-tdlib)
 
 ## Getting Started
 

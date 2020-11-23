@@ -1,7 +1,17 @@
 import 'dart:async';
 import 'dart:isolate';
+import 'dart:math';
 
 import 'package:rxdart/rxdart.dart';
+
+Future<void> _receiveEvent(SendPort port) async {
+  final event =
+      await Future(() => Random().nextInt(100) == 2 ? '*tdlib request*' : null);
+  if (event != null) {
+    port.send(event);
+  }
+  Future(() => _receiveEvent(port));
+}
 
 void isolate(SendPort port) {
   var isolateReceivePort = ReceivePort();
@@ -11,11 +21,9 @@ void isolate(SendPort port) {
     print('Received new request');
     SendPort tmpSendPort = message['port'] as SendPort;
     tmpSendPort.send('OK');
-
-    Future(() => port.send('(td_receive)'));
   });
 
-  Future(() => port.send('(td_receive)'));
+  _receiveEvent(port);
 }
 
 class Wrapper {
