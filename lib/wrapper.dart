@@ -3,10 +3,11 @@ import 'dart:isolate';
 import 'dart:math';
 
 import 'package:rxdart/rxdart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> _receiveEvent(SendPort port) async {
-  final event =
-      await Future(() => Random().nextInt(100) == 2 ? '*tdlib request*' : null);
+  final event = await Future(
+      () => Random().nextInt(10000) == 2 ? '*tdlib request*' : null);
   if (event != null) {
     port.send(event);
   }
@@ -18,12 +19,14 @@ void isolate(SendPort port) {
   port.send(isolateReceivePort.sendPort);
 
   isolateReceivePort.listen((message) async {
+    var prefs = await SharedPreferences.getInstance();
+    prefs.setString('test', DateTime.now().toString());
     print('Received new request');
     SendPort tmpSendPort = message['port'] as SendPort;
     tmpSendPort.send('OK');
   });
 
-  _receiveEvent(port);
+  //_receiveEvent(port);
 }
 
 class Wrapper {
